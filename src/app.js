@@ -5,6 +5,7 @@ const app = express();
 
 // Loading all the models
 const User = require("./models/users");
+const Task = require("./models/tasks");
 
 const port = process.env.PORT || 3000;
 
@@ -17,7 +18,19 @@ app.post("/users", (req, res) => {
 			res.send(user);
 		})
 		.catch((error) => {
-			res.send(error);
+			res.status(400).send(error);
+		});
+});
+
+app.post("/tasks", (req, res) => {
+	const task = new Task(req.body);
+
+	task.save()
+		.then(() => {
+			res.send(task);
+		})
+		.catch((error) => {
+			res.status(404).send(error);
 		});
 });
 
