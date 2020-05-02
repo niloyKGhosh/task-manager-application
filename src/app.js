@@ -9,8 +9,10 @@ const Task = require("./models/tasks");
 
 const port = process.env.PORT || 3000;
 
+// Parses the incoming requests using json.
 app.use(express.json());
 
+// Endpoint to the users list in the database.
 app.post("/users", (req, res) => {
 	const user = new User(req.body);
 	user.save()
@@ -22,6 +24,7 @@ app.post("/users", (req, res) => {
 		});
 });
 
+// Endpoint to the tasks list in the database.
 app.post("/tasks", (req, res) => {
 	const task = new Task(req.body);
 
@@ -34,6 +37,7 @@ app.post("/tasks", (req, res) => {
 		});
 });
 
+// The app starts the server and listens to port for incoming requests to routes.
 app.listen(port, () => {
 	console.log("Server is listening at port: " + port);
 });
