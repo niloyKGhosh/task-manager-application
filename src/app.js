@@ -1,14 +1,25 @@
 // Loading all the dependencies
+require("./db/mongoose");
 const express = require("express");
 const app = express();
-require("./db/mongoose");
 
 // Loading all the models
 const User = require("./models/users");
 
-const user = new User({
-	name: "Niloy",
-	email: "niloykumar256@gmail.com",
-	password: "hulalala3456",
-	age: "29",
+const port = process.env.PORT || 3000;
+
+app.post("/users", (req, res) => {
+	const user = new User(req.params);
+
+	user.save()
+		.then(() => {
+			res.send(user);
+		})
+		.catch((error) => {
+			res.send(error);
+		});
+});
+
+app.listen(port, () => {
+	console.log("Server is listening at port: " + port);
 });
