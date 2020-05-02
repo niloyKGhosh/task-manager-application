@@ -8,9 +8,10 @@ const User = require("./models/users");
 
 const port = process.env.PORT || 3000;
 
-app.post("/users", (req, res) => {
-	const user = new User(req.params);
+app.use(express.json());
 
+app.post("/users", (req, res) => {
+	const user = new User(req.body);
 	user.save()
 		.then(() => {
 			res.send(user);
