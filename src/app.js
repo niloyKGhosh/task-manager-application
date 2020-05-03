@@ -19,22 +19,21 @@ app.post("/users", async (req, res) => {
 	try {
 		await user.save();
 		res.status(201).send(user);
-	} catch (error) {
-		res.status(400).send(error);
+	} catch (e) {
+		res.status(400).send(e);
 	}
 });
 
 // Endpoint to create the tasks list in the database.
-app.post("/tasks", (req, res) => {
+app.post("/tasks", async (req, res) => {
 	const task = new Task(req.body);
 
-	task.save()
-		.then(() => {
-			res.status(201).send(task);
-		})
-		.catch((error) => {
-			res.status(404).send(error);
-		});
+	try {
+		await task.save();
+		res.status(201).send(task);
+	} catch (e) {
+		res.status(500).send(e);
+	}
 });
 
 // Get all the users stored in the database.
@@ -42,7 +41,7 @@ app.get("/users", async (req, res) => {
 	try {
 		const users = await User.find({});
 		res.send(users);
-	} catch (error) {
+	} catch (e) {
 		res.status(500).send();
 	}
 });
@@ -61,6 +60,27 @@ app.get("/users/:id", async (req, res) => {
 	}
 });
 
+app.get("/tasks", async (req, res) => {
+	try {
+		const tasks = await Task.find({});
+		res.send(tasks);
+	} catch (e) {
+		res.status(500).send();
+	}
+});
+
+app.get("/tasks/:id", async (req, res) => {
+	const _id = req.params.id;
+	try {
+		const task = await Task.findById(_id);
+		if (!task) {
+			return res.status(404).send("No task found!");
+		}
+		res.send(task);
+	} catch (e) {
+		res.status(500).send();
+	}
+});
 // The app starts the server and listens to port for incoming requests to routes.
 app.listen(port, () => {
 	console.log("Server is listening at port: " + port);
