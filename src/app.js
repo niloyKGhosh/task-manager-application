@@ -91,6 +91,19 @@ app.patch("/users/:id", async (req, res) => {
 	}
 });
 
+app.delete("/users/:id", async (req, res) => {
+	try {
+		const user = await User.findByIdAndDelete(req.params.id);
+
+		if (!user) {
+			return res.status(404).send("No users found to delete!");
+		}
+
+		res.send(user);
+	} catch (e) {
+		return res.status(500).send(e);
+	}
+});
 app.get("/tasks", async (req, res) => {
 	try {
 		const tasks = await Task.find({});
@@ -139,6 +152,20 @@ app.patch("/tasks/:id", async (req, res) => {
 		res.send(task);
 	} catch (e) {
 		res.status(400).send(e);
+	}
+});
+
+app.delete("/tasks/:id", async (req, res) => {
+	try {
+		const task = await Task.findByIdAndDelete(req.params.id);
+
+		if (!task) {
+			res.status(404).send("Task Not Found to delete");
+		}
+
+		res.send(task);
+	} catch (e) {
+		res, status(500).send(e);
 	}
 });
 // The app starts the server and listens to port for incoming requests to routes.
