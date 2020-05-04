@@ -60,6 +60,7 @@ app.get("/users/:id", async (req, res) => {
 	}
 });
 
+// Updates a specific id by route parameters
 app.patch("/users/:id", async (req, res) => {
 	// TODO: send http data as a json for req.body
 	// TODO: new: true sends the new user
@@ -79,7 +80,6 @@ app.patch("/users/:id", async (req, res) => {
 			new: true,
 			runValidators: true,
 		});
-		console.log(user);
 
 		if (!user) {
 			return res.status(404).send("No users found!");
@@ -110,6 +110,35 @@ app.get("/tasks/:id", async (req, res) => {
 		res.send(task);
 	} catch (e) {
 		res.status(500).send();
+	}
+});
+
+app.patch("/tasks/:id", async (req, res) => {
+	// TODO: send http data as a json for req.body
+	// TODO: new: true sends the new user
+
+	const updates = Object.keys(req.body);
+	const possibleUpdates = ["heading", "description", "completed"];
+	const isValidOperation = updates.every((update) =>
+		possibleUpdates.includes(update)
+	);
+
+	if (!isValidOperation) {
+		return res.status(400).send("Invalid update option");
+	}
+
+	try {
+		const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
+			new: true,
+			runValidators: true,
+		});
+
+		if (!task) {
+			return res.status(404).send("Task Not Found");
+		}
+		res.send(task);
+	} catch (e) {
+		res.status(400).send(e);
 	}
 });
 // The app starts the server and listens to port for incoming requests to routes.
