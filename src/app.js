@@ -60,6 +60,37 @@ app.get("/users/:id", async (req, res) => {
 	}
 });
 
+app.patch("/users/:id", async (req, res) => {
+	// TODO: send http data as a json for req.body
+	// TODO: new: true sends the new user
+
+	const updates = Object.keys(req.body);
+	const possibleUpdates = ["name", "email", "password", "age"];
+	const isValidOperation = updates.every((update) =>
+		possibleUpdates.includes(update)
+	);
+
+	if (!isValidOperation) {
+		return res.status(400).send("Invalid update option!");
+	}
+
+	try {
+		const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+			new: true,
+			runValidators: true,
+		});
+		console.log(user);
+
+		if (!user) {
+			return res.status(404).send("No users found!");
+		}
+
+		res.send(user);
+	} catch (e) {
+		res.status(400).send(e);
+	}
+});
+
 app.get("/tasks", async (req, res) => {
 	try {
 		const tasks = await Task.find({});
