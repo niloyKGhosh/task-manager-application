@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const userSchema = new mongoose.Schema({
 	name: {
 		type: String,
@@ -39,8 +40,29 @@ const userSchema = new mongoose.Schema({
 			}
 		},
 	},
+	tokens: [
+		{
+			token: {
+				type: String,
+				required: true,
+			},
+		},
+	],
 });
 
+// methods are accessible on instances
+userSchema.methods.generateAuthToken = async function () {
+	const token = jwt.sign(
+		{ _id: this._id.toString() },
+		"neededauthentication"
+	);
+
+	this.tokens = this.tokens.concat({ token });
+	await this.save();
+	return token;
+};
+
+// Static models are accessible on models
 userSchema.statics.findByCredentials = async (email, password) => {
 	const user = await User.findOne({ email });
 
@@ -51,7 +73,6 @@ userSchema.statics.findByCredentials = async (email, password) => {
 	const isMatch = await bcrypt.compare(password, user.password);
 	console.log(isMatch);
 	if (!isMatch) {
-		console.log("I am here");
 		throw new Error("Unable to login");
 	}
 
