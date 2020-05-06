@@ -68,7 +68,7 @@ router.patch("/users/:id", async (req, res) => {
 		const user = await User.findById(req.params.id, req.body);
 
 		updates.forEach((update) => {
-			user[update] = 
+			user[update] = req.body[update];
 		});
 		// const user = await User.findByIdAndUpdate(req.params.id, req.body, {
 		// 	new: true,
