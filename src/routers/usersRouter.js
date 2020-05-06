@@ -5,7 +5,6 @@ const router = new express.Router();
 // Endpoint to create the users list in the database.
 router.post("/users", async (req, res) => {
 	const user = new User(req.body);
-
 	try {
 		await user.save();
 		res.status(201).send(user);
@@ -66,10 +65,15 @@ router.patch("/users/:id", async (req, res) => {
 	}
 
 	try {
-		const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-			new: true,
-			runValidators: true,
+		const user = await User.findById(req.params.id, req.body);
+
+		updates.forEach((update) => {
+			user[update] = 
 		});
+		// const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+		// 	new: true,
+		// 	runValidators: true,
+		// });
 
 		if (!user) {
 			return res.status(404).send("No users found!");
