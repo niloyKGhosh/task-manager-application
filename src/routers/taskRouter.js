@@ -2,6 +2,18 @@ const express = require("express");
 const Task = require("../models/tasks");
 const router = new express.Router();
 
+// Endpoint to create the tasks list in the database.
+router.post("/tasks", async (req, res) => {
+	const task = new Task(req.body);
+
+	try {
+		await task.save();
+		res.status(201).send(task);
+	} catch (e) {
+		res.status(500).send(e);
+	}
+});
+
 router.get("/tasks", async (req, res) => {
 	try {
 		const tasks = await Task.find({});

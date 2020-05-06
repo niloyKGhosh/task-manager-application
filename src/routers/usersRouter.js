@@ -13,18 +13,6 @@ router.post("/users", async (req, res) => {
 	}
 });
 
-// Endpoint to create the tasks list in the database.
-router.post("/tasks", async (req, res) => {
-	const task = new Task(req.body);
-
-	try {
-		await task.save();
-		res.status(201).send(task);
-	} catch (e) {
-		res.status(500).send(e);
-	}
-});
-
 // Get all the users stored in the database.
 router.get("/users", async (req, res) => {
 	try {
@@ -65,19 +53,15 @@ router.patch("/users/:id", async (req, res) => {
 	}
 
 	try {
-		const user = await User.findById(req.params.id, req.body);
-
-		updates.forEach((update) => {
-			user[update] = req.body[update];
-		});
-		// const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-		// 	new: true,
-		// 	runValidators: true,
-		// });
-
+		const user = await User.findById(req.params.id);
 		if (!user) {
 			return res.status(404).send("No users found!");
 		}
+		updates.forEach((update) => {
+			user[update] = req.body[update];
+		});
+
+		await user.save();
 
 		res.send(user);
 	} catch (e) {
