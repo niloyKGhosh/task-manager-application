@@ -51,6 +51,15 @@ const userSchema = new mongoose.Schema({
 	],
 });
 
+userSchema.methods.toJSON = function () {
+	const user = this;
+	const publicProfile = user.toObject();
+
+	delete publicProfile.password;
+	delete publicProfile.tokens;
+
+	return publicProfile;
+};
 // methods are accessible on instances
 userSchema.methods.generateAuthToken = async function () {
 	const token = jwt.sign(
