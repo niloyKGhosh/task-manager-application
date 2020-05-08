@@ -68,7 +68,7 @@ router.get("/users/:id", async (req, res) => {
 });
 */
 
-router.patch("/users/:id", async (req, res) => {
+router.patch("/users/me", auth, async (req, res) => {
 	// TODO: send http data as a json for req.body
 	// TODO: new: true sends the new user
 
@@ -83,17 +83,13 @@ router.patch("/users/:id", async (req, res) => {
 	}
 
 	try {
-		const user = await User.findById(req.params.id);
-		if (!user) {
-			return res.status(404).send("No users found!");
-		}
 		updates.forEach((update) => {
-			user[update] = req.body[update];
+			req.user[update] = req.body[update];
 		});
 
-		await user.save();
+		await req.user.save();
 
-		res.send(user);
+		res.send(req.user);
 	} catch (e) {
 		res.status(400).send(e);
 	}
