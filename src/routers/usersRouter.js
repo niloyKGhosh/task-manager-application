@@ -53,6 +53,7 @@ router.get("/users/me", auth, async (req, res) => {
 	res.send(req.user);
 });
 
+/*
 router.get("/users/:id", async (req, res) => {
 	const _id = req.params.id;
 	try {
@@ -65,6 +66,7 @@ router.get("/users/:id", async (req, res) => {
 		res.status(500).send();
 	}
 });
+*/
 
 router.patch("/users/:id", async (req, res) => {
 	// TODO: send http data as a json for req.body
@@ -97,15 +99,10 @@ router.patch("/users/:id", async (req, res) => {
 	}
 });
 
-router.delete("/users/:id", async (req, res) => {
+router.delete("/users/me", auth, async (req, res) => {
 	try {
-		const user = await User.findByIdAndDelete(req.params.id);
-
-		if (!user) {
-			return res.status(404).send("No users found to delete!");
-		}
-
-		res.send(user);
+		await req.user.remove();
+		res.send(req.user);
 	} catch (e) {
 		return res.status(500).send(e);
 	}
