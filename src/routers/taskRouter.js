@@ -1,10 +1,13 @@
 const express = require("express");
 const Task = require("../models/tasks");
 const router = new express.Router();
-
+const auth = require("../middleware/auth");
 // Endpoint to create the tasks list in the database.
-router.post("/tasks", async (req, res) => {
-	const task = new Task(req.body);
+router.post("/tasks", auth, async (req, res) => {
+	const task = new Task({
+		...req.body,
+		owner: req.user._id,
+	});
 
 	try {
 		await task.save();
@@ -23,10 +26,12 @@ router.get("/tasks", async (req, res) => {
 	}
 });
 
-router.get("/tasks/:id", async (req, res) => {
+router.get("/tasks/:id", auth, async (req, res) => {
 	const _id = req.params.id;
 	try {
-		const task = await Task.findById(_id);
+		// Authenticates user and finds matches the id sent and onwer id stored in the Task Schema
+		const task = await Task.findOne({ _id, owner: req.user._id });
+
 		if (!task) {
 			return res.status(404).send("No task found!");
 		}
