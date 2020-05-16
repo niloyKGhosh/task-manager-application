@@ -29,6 +29,10 @@ router.get("/tasks", auth, async (req, res) => {
 			.populate({
 				path: "tasks",
 				match,
+				options: {
+					limit: parseInt(req.query.limit),
+					skip: parseInt(req.query.skip),
+				},
 			})
 			.execPopulate();
 		res.send(req.user.tasks);
@@ -38,7 +42,7 @@ router.get("/tasks", auth, async (req, res) => {
 });
 
 router.get("/tasks/:id", auth, async (req, res) => {
-	const _id = req.params.id;
+	const _id = req.params.id; // task id
 	try {
 		// Authenticates user and finds matches the id sent and onwer id stored in the Task Schema
 		const task = await Task.findOne({ _id, owner: req.user._id });

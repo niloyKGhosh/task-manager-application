@@ -82,6 +82,7 @@ router.patch("/users/me", auth, async (req, res) => {
 
 router.delete("/users/me", auth, async (req, res) => {
 	try {
+		// pre method defined when deleting user
 		await req.user.remove();
 		res.send(req.user);
 	} catch (e) {
