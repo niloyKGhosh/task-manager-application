@@ -122,4 +122,20 @@ router.delete("/users/me/avatar", auth, async (req, res) => {
 	await req.user.save();
 	res.send({ message: "Profile Photo deleted successfully" });
 });
+
+router.get("/users/:id/avatar", async (req, res) => {
+	try {
+		const user = await User.findById(req.params.id);
+
+		if (!user || !user.avatar) {
+			throw new Error("No image found");
+		}
+
+		// Tell the user it's a jpeg image by setting a response header
+		res.set("Content-Type", "image/jpg");
+		res.send(user.avatar);
+	} catch (e) {
+		res.status(404).send(e);
+	}
+});
 module.exports = router;
